@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"github.com/eiannone/keyboard"
 	"github.com/mgutz/ansi"
+	"log"
 	"os"
 	"strings"
 )
 
 func main() {
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
 	args := os.Args[1:]
 
 	commitMessage := ""
@@ -29,10 +32,8 @@ func main() {
 	}
 
 	status, err := GitStatus()
+	handleCommandError(err)
 
-	if err != nil {
-		panic(err.Error())
-	}
 
 	if len(status) == 0 {
 		PrintWarn("WARNING: Clean working tree. Nothing to commit.")
@@ -67,8 +68,9 @@ func handleCommandError(err error) {
 		return
 	}
 
+	panic(err.Error())
 	PrintError("An error is occurred.")
-	os.Exit(1)
+	//os.Exit(1)
 }
 
 func prompt(status []string, commitMessage string) {

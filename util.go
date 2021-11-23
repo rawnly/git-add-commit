@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -29,6 +30,16 @@ func GitCommit(message string) error {
 }
 
 func GitStatus() ([]string, error) {
+	colorui, err := GitConfig("color.ui")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := GitConfigSet("color.ui", "always"); err != nil {
+		return nil, err
+	}
+
 	b, err := exec.Command("git", "status", "-s").Output()
 
 	if err != nil {
@@ -38,6 +49,12 @@ func GitStatus() ([]string, error) {
 	out := string(b)
 
 	output := strings.Split(out, "\n")
+
+	if err := GitConfigSet("color.ui", strings.TrimSpace(strings.Trim(colorui, "\n"))); err != nil {
+		return nil, err
+	}
+
+	fmt.Println(colorui)
 
 	return output, nil
 }
@@ -89,4 +106,18 @@ func OpenEditor(content string) (string, error) {
 	}
 
 	return string(data), nil
+}
+
+func GitConfigSet(key string, value string) error {
+	return RunCommand("git", "config", key, value)
+}
+
+func GitConfig(key string) (string, error) {
+	out, err := exec.Command("git", "config", key).Output()
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(out), err
 }

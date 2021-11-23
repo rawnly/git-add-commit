@@ -1,16 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"github.com/mgutz/ansi"
+	"log"
 )
 
 func PrintWarn(text string) {
-	fmt.Println(ansi.Color(text, "black:yellow+h"))
+	content := ansi.Color(text, "black:yellow+h")
+	log.SetPrefix(ansi.Color("Warning: ", "black:yellow+h"))
+	log.Println(content)
 }
 
 func PrintError(text string) {
-	fmt.Println(ansi.Color(text, "white:red"))
+	log.SetPrefix(ansi.Color("Error: ", "white:red"))
+	log.Fatal(ansi.Color(text, "white:red"))
 }
 
 func BoldText(text string) string {
