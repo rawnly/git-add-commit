@@ -14,3 +14,6 @@ Download the latest release and put the binary in your `$PATH`
 ```shell
     git add-commit [commit message]
 ```
+
+#### See also
+- `git-select` - git checkout with ease.
