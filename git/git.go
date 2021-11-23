@@ -8,7 +8,9 @@ import (
 
 // SetConfig `git config <key>`
 func SetConfig(key string, value string) error {
-	return term.RunCommand("git", "config", key, value)
+	_, err := term.RunCommand("git", "config", key, value)
+
+	return err
 }
 
 // Config `git config <key> <value>`
@@ -24,7 +26,8 @@ func Config(key string) (string, error) {
 
 // Commit `git commit -n -a -m [message]`
 func Commit(message string) error {
-	return term.RunCommand("git", "commit", "-n", "-a", "-m", message)
+	_, err := term.RunCommand("git", "commit", "-n", "-a", "-m", message)
+	return err
 }
 
 // Status `git status -s`
@@ -56,10 +59,12 @@ func Status() ([]string, error) {
 
 // Diff `git diff`
 func Diff() error {
-	return term.RunCommand("git", "diff")
+	_, err := term.RunCommand("git", "diff")
+	return err
 }
 
 // AddAll `git add -A .`
 func AddAll() error {
-	return term.RunCommand("git", "add", "-A", ".")
+	_, err := term.RunCommand("git", "add", "-A", ".")
+	return err
 }

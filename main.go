@@ -69,7 +69,8 @@ func handleCommandError(err error) {
 	if err == nil {
 		return
 	}
-	printError("An error is occurred.")
+
+	printError(fmt.Sprintf("An error is occurred: %s", err.Error()))
 }
 
 func prompt(status []string, commitMessage string) {
