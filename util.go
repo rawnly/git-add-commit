@@ -30,7 +30,7 @@ func GitCommit(message string) error {
 }
 
 func GitStatus() ([]string, error) {
-	colorui, err := GitConfig("color.ui")
+	colorUiConfig, err := GitConfig("color.ui")
 
 	if err != nil {
 		return nil, err
@@ -50,11 +50,11 @@ func GitStatus() ([]string, error) {
 
 	output := strings.Split(out, "\n")
 
-	if err := GitConfigSet("color.ui", strings.TrimSpace(strings.Trim(colorui, "\n"))); err != nil {
+	if err := GitConfigSet("color.ui", strings.TrimSpace(strings.Trim(colorUiConfig, "\n"))); err != nil {
 		return nil, err
 	}
 
-	fmt.Println(colorui)
+	fmt.Println(colorUiConfig)
 
 	return output, nil
 }
