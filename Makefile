@@ -13,6 +13,7 @@ install:
 tar:
 	tar -czf $(bin).tar.gz --directory=$(buildFolder) $(bin)
 	shasum -a 256 $(bin).tar.gz
+	mv $(bin).tar.gz $(buildFolder)
 
 upload-assets:
 	gh release upload $(version)  $(buildPath) $(bin).tar.gz
@@ -22,4 +23,3 @@ publish: build tar tag upload-assets
 
 tag:
 	gh release create $(version) -t "v$(version)"
-
