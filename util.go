@@ -1,20 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"strings"
 )
 
-func GitDiff() error {
-	return RunCommand("git", "diff")
-}
-
-func GitAddAll() error {
-	return RunCommand("git", "add", "-A", ".")
-}
-
+// RunCommand Execute a command ignoring output
 func RunCommand(command string, args ...string) error {
 	cmd := exec.Command(command, args...)
 
@@ -25,63 +17,12 @@ func RunCommand(command string, args ...string) error {
 	return cmd.Run()
 }
 
-func GitCommit(message string) error {
-	return RunCommand("git", "commit", "-n", "-a", "-m", message)
-}
-
-func GitStatus() ([]string, error) {
-	colorUiConfig, err := GitConfig("color.ui")
-
-	if err != nil {
-		return nil, err
-	}
-
-	if err := GitConfigSet("color.ui", "always"); err != nil {
-		return nil, err
-	}
-
-	b, err := exec.Command("git", "status", "-s").Output()
-
-	if err != nil {
-		return nil, err
-	}
-
-	out := string(b)
-
-	output := strings.Split(out, "\n")
-
-	if err := GitConfigSet("color.ui", strings.TrimSpace(strings.Trim(colorUiConfig, "\n"))); err != nil {
-		return nil, err
-	}
-
-	fmt.Println(colorUiConfig)
-
-	return output, nil
-}
-
+// Clear clears terminal
 func Clear() error {
 	return RunCommand("clear")
 }
 
-func writeFile(filename string, content string) error {
-	f, err := os.Create(filename)
-
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	_, err2 := f.WriteString(content)
-
-	if err2 != nil {
-		return err
-	}
-
-	return nil
-}
-
-
+// OpenEditor Edit commit message via VIM
 func OpenEditor(content string) (string, error) {
 	const FileName = ".commit"
 
@@ -108,16 +49,35 @@ func OpenEditor(content string) (string, error) {
 	return string(data), nil
 }
 
-func GitConfigSet(key string, value string) error {
-	return RunCommand("git", "config", key, value)
-}
-
-func GitConfig(key string) (string, error) {
-	out, err := exec.Command("git", "config", key).Output()
+// writeFile Writes a file truncating it if exists.
+func writeFile(filename string, content string) error {
+	f, err := os.Create(filename)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return string(out), err
+	defer f.Close()
+
+	_, err2 := f.WriteString(content)
+
+	if err2 != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RemoveEmptyStrings(arr []string) []string {
+	var items []string
+
+	for _, item := range arr {
+		trimmed := strings.TrimRight(strings.TrimSpace(item), "\n")
+
+		if len(trimmed) > 0 {
+			items = append(items, trimmed)
+		}
+	}
+
+	return items
 }
