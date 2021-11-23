@@ -7,12 +7,12 @@ import (
 
 func PrintWarn(text string) {
 	content := ansi.Color(text, "black:yellow+h")
-	log.SetPrefix(ansi.Color("Warning: ", "black:yellow+h"))
+	log.SetPrefix(ansi.Color("WARNING: ", "black:yellow+h"))
 	log.Println(content)
 }
 
 func PrintError(text string) {
-	log.SetPrefix(ansi.Color("Error: ", "white:red"))
+	log.SetPrefix(ansi.Color("ERROR: ", "white:red"))
 	log.Fatal(ansi.Color(text, "white:red"))
 }
 

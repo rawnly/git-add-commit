@@ -36,7 +36,7 @@ func main() {
 
 
 	if len(status) == 0 {
-		PrintWarn("WARNING: Clean working tree. Nothing to commit.")
+		PrintWarn("Clean working tree. Nothing to commit.")
 		return
 	}
 
