@@ -88,5 +88,5 @@ func OpenEditor(content string) (string, error) {
 		return "", err
 	}
 
-	return strings.TrimRight(string(data), "\n"), nil
+	return string(data), nil
 }

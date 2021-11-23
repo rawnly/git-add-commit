@@ -5,29 +5,27 @@ import (
 	"github.com/eiannone/keyboard"
 	"github.com/mgutz/ansi"
 	"os"
+	"strings"
 )
 
 func main() {
 	args := os.Args[1:]
 
-	var commitMessage string
+	commitMessage := ""
 
 	if len(args) > 0 {
-		commitMessage = args[0]
+		commitMessage = strings.TrimRight(strings.TrimSpace(args[0]), "\n")
 	}
 
 	if len(args) == 0 {
 		newCommit, err := OpenEditor(commitMessage)
-
-		if err != nil {
-			panic(err.Error())
-		}
-
-		commitMessage = newCommit
+		handleCommandError(err)
+		commitMessage = strings.TrimRight(strings.TrimSpace(newCommit), "\n")
 	}
 
 	if len(commitMessage) == 0 {
-		PrintError("Empty commit message.")
+		PrintError("Please provide a valid commit message.")
+		os.Exit(1)
 	}
 
 	status, err := GitStatus()
