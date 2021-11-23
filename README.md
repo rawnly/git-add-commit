@@ -20,4 +20,7 @@ Download the latest release and put the binary in your `$PATH`
 ```
 
 #### See also
-- `git-select` - git checkout with ease.
+- [`git-select`][git-select] - git checkout with ease.
+
+
+[git-select]: https://github.com/rawnly/git-select
