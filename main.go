@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/eiannone/keyboard"
 	"github.com/mgutz/ansi"
+	"github.com/rawnly/git-add-commit/git"
+	"github.com/rawnly/git-add-commit/term"
 	"log"
 	"os"
 	"strings"
@@ -21,22 +23,22 @@ func main() {
 	}
 
 	if len(args) == 0 {
-		newCommit, err := OpenEditor(commitMessage)
+		newCommit, err := term.OpenEditor(commitMessage)
 		handleCommandError(err)
 		commitMessage = strings.TrimRight(strings.TrimSpace(newCommit), "\n")
 	}
 
 	if len(commitMessage) == 0 {
-		PrintError("Please provide a valid commit message.")
+		printError("Please provide a valid commit message.")
 		os.Exit(1)
 	}
 
-	status, err := GitStatus()
+	status, err := git.Status()
 	handleCommandError(err)
 
 
 	if len(status) == 0 {
-		PrintWarn("Clean working tree. Nothing to commit.")
+		printWarn("Clean working tree. Nothing to commit.")
 		return
 	}
 
@@ -44,22 +46,22 @@ func main() {
 }
 
 func showUsage() {
-	fmt.Printf("Press %s to continue or %s to abort.\n", BoldText("[ENTER]"), BoldText("[ESC]"))
-	fmt.Println(DimText("Press [d] to run diff"))
-	fmt.Printf("%s %s\n", DimText("Press [e] to edit the"), ansi.Color("commit message", "yellow+d"))
-	fmt.Println(DimText("Press [q] to quit"))
+	fmt.Printf("Press %s to continue or %s to abort.\n", boldText("[ENTER]"), boldText("[ESC]"))
+	fmt.Println(dimText("Press [d] to run diff"))
+	fmt.Printf("%s %s\n", dimText("Press [e] to edit the"), ansi.Color("commit message", "yellow+d"))
+	fmt.Println(dimText("Press [q] to quit"))
 }
 
 func showStatus(status []string, commitMessage string) {
 	fmt.Println()
 	fmt.Printf("Committing the following files with: [ %s ]\n", ansi.Color(commitMessage, "yellow+hbu"))
-	fmt.Println(DimText("-----------------"))
+	fmt.Println(dimText("-----------------"))
 	for _, s := range status {
 		if len(s) > 0 {
 			fmt.Println(s)
 		}
 	}
-	fmt.Println(DimText("-----------------"))
+	fmt.Println(dimText("-----------------"))
 	fmt.Println()
 }
 
@@ -67,14 +69,11 @@ func handleCommandError(err error) {
 	if err == nil {
 		return
 	}
-
-	panic(err.Error())
-	PrintError("An error is occurred.")
-	//os.Exit(1)
+	printError("An error is occurred.")
 }
 
 func prompt(status []string, commitMessage string) {
-	handleCommandError(Clear())
+	handleCommandError(term.Clear())
 	showStatus(status, commitMessage)
 	showUsage()
 }
@@ -94,31 +93,31 @@ func execute(status []string, commitMessage string) {
 
 	switch key {
 	case keyboard.KeyEnter: // ENTER
-		handleCommandError(GitAddAll())
+		handleCommandError(git.AddAll())
 		fmt.Println()
-		handleCommandError(GitCommit(commitMessage))
+		handleCommandError(git.Commit(commitMessage))
 		os.Exit(0)
 	case keyboard.KeyEsc:
 		fmt.Println()
-		PrintError("Operation Aborted.")
+		printError("Operation Aborted.")
 		os.Exit(0)
 	case keyboard.KeyCtrlC:
 		fmt.Println()
-		PrintError("Operation Aborted.")
+		printError("Operation Aborted.")
 		os.Exit(0)
 	default:
 		switch char {
 		case QChar:
 			fmt.Println()
-			PrintError("Operation Aborted.")
+			printError("Operation Aborted.")
 			os.Exit(0)
 		case EChar:
-			newCommit, err := OpenEditor(commitMessage)
+			newCommit, err := term.OpenEditor(commitMessage)
 			handleCommandError(err)
 
 			commitMessage = newCommit
 		case DChar:
-			handleCommandError(GitDiff())
+			handleCommandError(git.Diff())
 			break
 		default:
 			execute(status, commitMessage)
@@ -126,4 +125,25 @@ func execute(status []string, commitMessage string) {
 		}
 		break
 	}
+}
+
+
+
+func printWarn(text string) {
+	content := ansi.Color(text, "black:yellow+h")
+	log.SetPrefix(ansi.Color("WARNING: ", "black:yellow+h"))
+	log.Println(content)
+}
+
+func printError(text string) {
+	log.SetPrefix(ansi.Color("ERROR: ", "white:red"))
+	log.Fatal(ansi.Color(text, "white:red"))
+}
+
+func boldText(text string) string {
+	return ansi.Color(text, "default+b")
+}
+
+func dimText(text string) string {
+	return ansi.Color(text, "default+d")
 }
