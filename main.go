@@ -93,8 +93,8 @@ func execute(status []string, commitMessage string) {
 	switch key {
 	case keyboard.KeyEnter: // ENTER
 		handleCommandError(GitAddAll())
+		fmt.Println()
 		handleCommandError(GitCommit(commitMessage))
-
 		os.Exit(0)
 	case keyboard.KeyEsc:
 		fmt.Println()
