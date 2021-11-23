@@ -22,6 +22,8 @@ brews:
     name: git-add-commit
     homepage: "https://github.com/rawnly/git-add-commit"
     license: "MIT"
+    folder: Formula
+    description: "Commit made easy"
     tap:
       owner: rawnly
       name: homebrew-tap
