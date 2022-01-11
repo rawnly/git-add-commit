@@ -1,5 +1,6 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
+project_name: GitAddCommit
 before:
   hooks:
     - go mod tidy
@@ -17,6 +18,11 @@ archives:
       windows: Windows
       386: i386
       amd64: x86_64
+release:
+  github:
+    owner: rawnly
+    name: git-add-commit
+
 brews:
   -
     name: git-add-commit
@@ -41,3 +47,12 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+announce:
+  smtp:
+    enabled: true
+    host: "smtp.gmail.com"
+    port: 587
+    from: "releases@fedevitale.dev"
+    to:
+      - "newsletter@fedevitale.dev"
+    username: "fedevitale99@gmail.com"
