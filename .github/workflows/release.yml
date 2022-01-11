@@ -37,7 +37,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v2
         if: github.event_name == 'pull_request' || github.ref_name != 'master' 
         with:
-          distrivution: goreleaser
+          distribution: goreleaser
           version: latest
           args: release --snapshot --rm-dist
         env:
@@ -47,7 +47,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v2
         if: github.ref_name == 'master' && github.event_name != 'pull_request'
         with:
-          distrivution: goreleaser
+          distribution: goreleaser
           version: latest
           args: release --rm-dist
         env:
