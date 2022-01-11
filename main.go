@@ -83,6 +83,7 @@ func execute(status []string, commitMessage string) {
 	const QChar = 113
 	const EChar = 101
 	const DChar = 100
+	const PChar = 122
 
 	prompt(status, commitMessage)
 
@@ -120,6 +121,11 @@ func execute(status []string, commitMessage string) {
 		case DChar:
 			handleCommandError(git.Diff())
 			break
+		case PChar:
+			output, err := git.Push(git.CurrentBranch())
+			handleCommandError(err)
+			fmt.Println(output)
+			break			
 		default:
 			execute(status, commitMessage)
 			break
