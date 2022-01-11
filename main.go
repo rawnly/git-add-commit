@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+
+
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
@@ -119,10 +121,13 @@ func execute(status []string, commitMessage string) {
 		case keys["E"]:
 			newCommit, err := term.OpenEditor(commitMessage)
 			handleCommandError(err)
-
-			commitMessage = newCommit
+			_ = term.Clear()
+			execute(status, strings.TrimRight(strings.TrimSpace(newCommit), "\n"))
+			break
 		case keys["D"]:
 			handleCommandError(git.Diff())
+			_ = term.Clear()
+			execute(status, commitMessage)
 			break
 		case keys["P"]:
 			handleCommandError(git.AddAll())
@@ -140,6 +145,7 @@ func execute(status []string, commitMessage string) {
 
 			os.Exit(0)
 		default:
+			_ = term.Clear()
 			execute(status, commitMessage)
 			break
 		}

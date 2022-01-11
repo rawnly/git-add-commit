@@ -86,12 +86,10 @@ func Status() ([]string, error) {
 
 // Diff `git diff`
 func Diff() error {
-	_, err := term.RunCommand("git", "diff")
-	return err
+	return term.RunOSCommand("git", "diff")
 }
 
 // AddAll `git add -A .`
 func AddAll() error {
-	_, err := term.RunCommand("git", "add", "-A", ".")
-	return err
+	return term.RunOSCommand("git", "add", "-A", ".")
 }
