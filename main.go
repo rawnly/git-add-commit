@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+
+
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
@@ -115,12 +117,16 @@ func execute(status []string, commitMessage string) {
 		case EChar:
 			newCommit, err := term.OpenEditor(commitMessage)
 			handleCommandError(err)
-
-			commitMessage = newCommit
+			_ = term.Clear()
+			execute(status, strings.TrimRight(strings.TrimSpace(newCommit), "\n"))
+			break
 		case DChar:
 			handleCommandError(git.Diff())
+			_ = term.Clear()
+			execute(status, commitMessage)
 			break
 		default:
+			_ = term.Clear()
 			execute(status, commitMessage)
 			break
 		}

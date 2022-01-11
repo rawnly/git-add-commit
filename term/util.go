@@ -1,8 +1,6 @@
 package term
 
 import (
-	"bytes"
-	"errors"
 	"os"
 	"os/exec"
 	"strings"
@@ -10,27 +8,34 @@ import (
 
 // RunCommand Execute a command ignoring output
 func RunCommand(command string, args ...string) (string, error) {
-	cmd := exec.Command(command, args...)
-
-	var stdout, stderr bytes.Buffer
-
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
+	stdout, err := exec.Command(command, args...).CombinedOutput()
 
 	if err != nil {
-		return "", errors.New(stderr.String())
+		return "", err
 	}
 
-	return stdout.String(), nil
+	return string(stdout), nil
 }
 
 // Clear clears terminal
 func Clear() error {
-	_, err := RunCommand("clear")
+	cmd := exec.Command("clear")
 
-	return err
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
+func RunOSCommand(command string, args ...string) error {
+	cmd := exec.Command(command,  args...)
+
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
 }
 
 // OpenEditor Edit commit message via VIM
@@ -41,9 +46,7 @@ func OpenEditor(content string) (string, error) {
 		return "", e
 	}
 
-	_, err := RunCommand("vim",  FileName)
-
-	if err != nil {
+	if err := RunOSCommand("vim", FileName); err != nil {
 		return content, err
 	}
 
@@ -54,6 +57,7 @@ func OpenEditor(content string) (string, error) {
 	}
 
 	if err = os.Remove(FileName); err != nil {
+		println(err.Error())
 		return "", err
 	}
 
