@@ -19,6 +19,12 @@ Download the latest release and put the binary in your `$PATH`
     git add-commit [commit message]
 ```
 
+- <kbd>ENTER</kbd> to `add` and `commit`
+- <kbd>d</kbd> to run `diff`
+- <kbd>e</kbd> to edit the `commit message`
+- <kbd>p</kbd> to run `add`, `commit` and `push`
+
+
 #### See also
 - [`git-select`][git-select] - git checkout with ease.
 

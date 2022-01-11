@@ -2,3 +2,4 @@ git-add-commit
 
 dist/
 release
+.DS_Store
