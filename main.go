@@ -132,7 +132,12 @@ func execute(status []string, commitMessage string) {
 			output, err := git.Push(git.CurrentBranch())
 			handleCommandError(err)
 
-			fmt.Println(output, err)
+			if output == "" {
+				fmt.Println("Changes successfully pushed.")
+			} else {
+				fmt.Println(output)
+			}
+
 			os.Exit(0)
 		default:
 			execute(status, commitMessage)
