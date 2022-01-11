@@ -73,6 +73,7 @@ func handleCommandError(err error) {
 	}
 
 	printError(fmt.Sprintf("An error is occurred: %s", err.Error()))
+	os.Exit(1)
 }
 
 func prompt(status []string, commitMessage string) {
@@ -82,10 +83,10 @@ func prompt(status []string, commitMessage string) {
 }
 
 func execute(status []string, commitMessage string) {
-	const QChar = 113
-	const EChar = 101
-	const DChar = 100
-	const PChar = 112
+	keys := map[string]rune {
+		"Q": 113, "E": 101,
+		"D": 100, "P": 112,
+	}
 
 	prompt(status, commitMessage)
 
@@ -111,29 +112,29 @@ func execute(status []string, commitMessage string) {
 		os.Exit(0)
 	default:
 		switch char {
-		case QChar:
+		case keys["Q"]:
 			fmt.Println()
 			printError("Operation Aborted.")
 			os.Exit(0)
-		case EChar:
+		case keys["E"]:
 			newCommit, err := term.OpenEditor(commitMessage)
 			handleCommandError(err)
 
 			commitMessage = newCommit
-		case DChar:
+		case keys["D"]:
 			handleCommandError(git.Diff())
 			break
-		case PChar:
+		case keys["P"]:
 			handleCommandError(git.AddAll())
 			fmt.Println()
 			handleCommandError(git.Commit(commitMessage))
 
 			output, err := git.Push(git.CurrentBranch())
 			handleCommandError(err)
-			fmt.Println(output)
+
+			fmt.Println(output, err)
 			os.Exit(0)
 		default:
-			fmt.Println(char)
 			execute(status, commitMessage)
 			break
 		}
@@ -161,3 +162,4 @@ func boldText(text string) string {
 func dimText(text string) string {
 	return ansi.Color(text, "default+d")
 }
+

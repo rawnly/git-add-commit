@@ -30,11 +30,12 @@ func Commit(message string) error {
 	return err
 }
 
-// Push `git push -u origin ${branch}`
+// Push `git push origin ${branch}`
 func Push(branch string) (string, error) {
 	return term.RunCommand("git", "push", "origin", branch)
 }
 
+// CurrentBranch Get current branch
 func CurrentBranch() string {
 	var currentBranch string
 	
@@ -44,7 +45,7 @@ func CurrentBranch() string {
 		return currentBranch
 	}
 
-	output := strings.ReplaceAll(string(b), " ", "")
+	output := strings.ReplaceAll(b, " ", "")
 
 	for _, b := range strings.Split(output, "\n") {
 		if strings.Contains(b, "*") {
