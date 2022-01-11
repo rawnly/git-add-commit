@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+
+
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
@@ -47,6 +49,8 @@ func main() {
 
 func showUsage() {
 	fmt.Printf("Press %s to continue or %s to abort.\n", boldText("[ENTER]"), boldText("[ESC]"))
+	fmt.Printf("Press %s to continue and %s.\n", boldText("[p]"), boldText("PUSH"))
+	fmt.Println()
 	fmt.Println(dimText("Press [d] to run diff"))
 	fmt.Printf("%s %s\n", dimText("Press [e] to edit the"), ansi.Color("commit message", "yellow+d"))
 	fmt.Println(dimText("Press [q] to quit"))
@@ -71,6 +75,7 @@ func handleCommandError(err error) {
 	}
 
 	printError(fmt.Sprintf("An error is occurred: %s", err.Error()))
+	os.Exit(1)
 }
 
 func prompt(status []string, commitMessage string) {
@@ -80,9 +85,10 @@ func prompt(status []string, commitMessage string) {
 }
 
 func execute(status []string, commitMessage string) {
-	const QChar = 113
-	const EChar = 101
-	const DChar = 100
+	keys := map[string]rune {
+		"Q": 113, "E": 101,
+		"D": 100, "P": 112,
+	}
 
 	prompt(status, commitMessage)
 
@@ -108,19 +114,38 @@ func execute(status []string, commitMessage string) {
 		os.Exit(0)
 	default:
 		switch char {
-		case QChar:
+		case keys["Q"]:
 			fmt.Println()
 			printError("Operation Aborted.")
 			os.Exit(0)
-		case EChar:
+		case keys["E"]:
 			newCommit, err := term.OpenEditor(commitMessage)
 			handleCommandError(err)
-
-			commitMessage = newCommit
-		case DChar:
-			handleCommandError(git.Diff())
+			_ = term.Clear()
+			execute(status, strings.TrimRight(strings.TrimSpace(newCommit), "\n"))
 			break
+		case keys["D"]:
+			handleCommandError(git.Diff())
+			_ = term.Clear()
+			execute(status, commitMessage)
+			break
+		case keys["P"]:
+			handleCommandError(git.AddAll())
+			fmt.Println()
+			handleCommandError(git.Commit(commitMessage))
+
+			output, err := git.Push(git.CurrentBranch())
+			handleCommandError(err)
+
+			if output == "" {
+				fmt.Println("Changes successfully pushed.")
+			} else {
+				fmt.Println(output)
+			}
+
+			os.Exit(0)
 		default:
+			_ = term.Clear()
 			execute(status, commitMessage)
 			break
 		}
@@ -148,3 +173,4 @@ func boldText(text string) string {
 func dimText(text string) string {
 	return ansi.Color(text, "default+d")
 }
+

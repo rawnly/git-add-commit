@@ -30,6 +30,33 @@ func Commit(message string) error {
 	return err
 }
 
+// Push `git push origin ${branch}`
+func Push(branch string) (string, error) {
+	return term.RunCommand("git", "push", "origin", branch)
+}
+
+// CurrentBranch Get current branch
+func CurrentBranch() string {
+	var currentBranch string
+	
+	b, err := term.RunCommand("git", "branch")
+
+	if err != nil {
+		return currentBranch
+	}
+
+	output := strings.ReplaceAll(b, " ", "")
+
+	for _, b := range strings.Split(output, "\n") {
+		if strings.Contains(b, "*") {
+			currentBranch = b
+		}
+	}
+
+	return strings.ReplaceAll(currentBranch, "*", "")
+}
+
+
 // Status `git status -s`
 func Status() ([]string, error) {
 	colorUiConfig, err := Config("color.ui")
@@ -59,12 +86,10 @@ func Status() ([]string, error) {
 
 // Diff `git diff`
 func Diff() error {
-	_, err := term.RunCommand("git", "diff")
-	return err
+	return term.RunOSCommand("git", "diff")
 }
 
 // AddAll `git add -A .`
 func AddAll() error {
-	_, err := term.RunCommand("git", "add", "-A", ".")
-	return err
+	return term.RunOSCommand("git", "add", "-A", ".")
 }
