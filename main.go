@@ -47,6 +47,8 @@ func main() {
 
 func showUsage() {
 	fmt.Printf("Press %s to continue or %s to abort.\n", boldText("[ENTER]"), boldText("[ESC]"))
+	fmt.Printf("Press %s to continue and %s.\n", boldText("[p]"), boldText("PUSH"))
+	fmt.Println()
 	fmt.Println(dimText("Press [d] to run diff"))
 	fmt.Printf("%s %s\n", dimText("Press [e] to edit the"), ansi.Color("commit message", "yellow+d"))
 	fmt.Println(dimText("Press [q] to quit"))
@@ -83,7 +85,7 @@ func execute(status []string, commitMessage string) {
 	const QChar = 113
 	const EChar = 101
 	const DChar = 100
-	const PChar = 122
+	const PChar = 112
 
 	prompt(status, commitMessage)
 
@@ -122,11 +124,16 @@ func execute(status []string, commitMessage string) {
 			handleCommandError(git.Diff())
 			break
 		case PChar:
+			handleCommandError(git.AddAll())
+			fmt.Println()
+			handleCommandError(git.Commit(commitMessage))
+
 			output, err := git.Push(git.CurrentBranch())
 			handleCommandError(err)
 			fmt.Println(output)
-			break			
+			os.Exit(0)
 		default:
+			fmt.Println(char)
 			execute(status, commitMessage)
 			break
 		}
