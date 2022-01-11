@@ -12,7 +12,7 @@ permissions:
   
 jobs:
   goreleaser:
-    runs-on: ubunut-latest
+    runs-on: ubuntu-latest
     steps:
       - 
         name: Checkout
