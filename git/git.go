@@ -3,7 +3,6 @@ package git
 import (
 	"github.com/rawnly/git-add-commit/term"
 	"os/exec"
-	"fmt"
 	"strings"
 )
 
