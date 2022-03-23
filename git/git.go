@@ -3,6 +3,7 @@ package git
 import (
 	"github.com/rawnly/git-add-commit/term"
 	"os/exec"
+	"fmt"
 	"strings"
 )
 
@@ -38,7 +39,7 @@ func Push(branch string) (string, error) {
 // CurrentBranch Get current branch
 func CurrentBranch() string {
 	var currentBranch string
-	
+
 	b, err := term.RunCommand("git", "branch")
 
 	if err != nil {
@@ -62,6 +63,10 @@ func Status() ([]string, error) {
 	colorUiConfig, err := Config("color.ui")
 
 	if err != nil {
+		if err := SetConfig("color.ui", "auto"); err != nil {
+			return nil, err
+		}
+
 		return nil, err
 	}
 

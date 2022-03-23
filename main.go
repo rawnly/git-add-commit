@@ -36,6 +36,7 @@ func main() {
 	}
 
 	status, err := git.Status()
+	fmt.Println(status, err.Error())
 	handleCommandError(err)
 
 
