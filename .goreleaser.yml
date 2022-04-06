@@ -2,7 +2,7 @@
 # Make sure to check the documentation at https://goreleaser.com
 project_name: GitAddCommit
 universal_binaries:
-  - name: git-add-commit
+  - name_template: git-add-commit
     replace: true
 before:
   hooks:
