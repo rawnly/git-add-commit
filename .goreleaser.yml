@@ -1,6 +1,9 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
 project_name: GitAddCommit
+universal_binaries:
+  - name_template: '{{.ProjectName}}_{{.Version}}'
+    replace: true
 before:
   hooks:
     - go mod tidy
@@ -29,11 +32,16 @@ brews:
     homepage: "https://github.com/rawnly/git-add-commit"
     license: "MIT"
     folder: Formula
+    caveats: "git-add-commit [message]"
     description: "Commit made easy"
     tap:
       owner: rawnly
       name: homebrew-tap
       branch: master
+    commit_author:
+      email: goreleaser@fedevitale.dev
+      name: GoReleaser Bot
+
     dependencies:
       - git
 
