@@ -2,7 +2,6 @@
 # Make sure to check the documentation at https://goreleaser.com
 project_name: GitAddCommit
 universal_binaries:
-  - name_template: '{{.ProjectName}}_{{.Version}}'
     replace: true
 before:
   hooks:
