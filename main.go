@@ -11,8 +11,6 @@ import (
 	"strings"
 )
 
-
-
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
@@ -36,9 +34,7 @@ func main() {
 	}
 
 	status, err := git.Status()
-	fmt.Println(status, err.Error())
 	handleCommandError(err)
-
 
 	if len(status) == 0 {
 		printWarn("Clean working tree. Nothing to commit.")
@@ -86,7 +82,7 @@ func prompt(status []string, commitMessage string) {
 }
 
 func execute(status []string, commitMessage string) {
-	keys := map[string]rune {
+	keys := map[string]rune{
 		"Q": 113, "E": 101,
 		"D": 100, "P": 112,
 	}
@@ -135,14 +131,8 @@ func execute(status []string, commitMessage string) {
 			fmt.Println()
 			handleCommandError(git.Commit(commitMessage))
 
-			output, err := git.Push(git.CurrentBranch())
+			err := git.Push(git.CurrentBranch())
 			handleCommandError(err)
-
-			if output == "" {
-				fmt.Println("Changes successfully pushed.")
-			} else {
-				fmt.Println(output)
-			}
 
 			os.Exit(0)
 		default:
@@ -153,8 +143,6 @@ func execute(status []string, commitMessage string) {
 		break
 	}
 }
-
-
 
 func printWarn(text string) {
 	content := ansi.Color(text, "black:yellow+h")
@@ -174,4 +162,3 @@ func boldText(text string) string {
 func dimText(text string) string {
 	return ansi.Color(text, "default+d")
 }
-

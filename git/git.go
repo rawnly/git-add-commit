@@ -31,8 +31,8 @@ func Commit(message string) error {
 }
 
 // Push `git push origin ${branch}`
-func Push(branch string) (string, error) {
-	return term.RunCommand("git", "push", "origin", branch)
+func Push(branch string) error {
+	return term.RunOSCommand("git", "push", "origin", branch)
 }
 
 // CurrentBranch Get current branch
@@ -55,7 +55,6 @@ func CurrentBranch() string {
 
 	return strings.ReplaceAll(currentBranch, "*", "")
 }
-
 
 // Status `git status -s`
 func Status() ([]string, error) {
