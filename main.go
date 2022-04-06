@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/alecthomas/kong"
 	"github.com/eiannone/keyboard"
 	"github.com/mgutz/ansi"
 	"github.com/rawnly/git-add-commit/git"
@@ -11,18 +12,30 @@ import (
 	"strings"
 )
 
+var Version = "development"
+
+var cli struct {
+	Version bool   `help:"Print version" short:"v"`
+	Commit  string `arg:"" help:"Your commit message" name:"commit message" optional:""`
+}
+
+func printVersion() {
+	fmt.Println(fmt.Sprintf("Version %s", Version))
+}
+
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
-	args := os.Args[1:]
+	_ = kong.Parse(&cli)
 
-	commitMessage := ""
-
-	if len(args) > 0 {
-		commitMessage = strings.TrimRight(strings.TrimSpace(args[0]), "\n")
+	if cli.Version {
+		printVersion()
+		return
 	}
 
-	if len(args) == 0 {
+	commitMessage := strings.TrimRight(strings.TrimSpace(cli.Commit), "\n")
+
+	if len(commitMessage) == 0 {
 		newCommit, err := term.OpenEditor(commitMessage)
 		handleCommandError(err)
 		commitMessage = strings.TrimRight(strings.TrimSpace(newCommit), "\n")
