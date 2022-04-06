@@ -2,7 +2,7 @@
 # Make sure to check the documentation at https://goreleaser.com
 project_name: GitAddCommit
 universal_binaries:
-    replace: true
+  - replace: true
 before:
   hooks:
     - go mod tidy
