@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-var Version = "development"
+var version = "development"
 
 var cli struct {
 	Version bool   `help:"Print version" short:"v"`
@@ -20,7 +20,7 @@ var cli struct {
 }
 
 func printVersion() {
-	fmt.Println(fmt.Sprintf("Version %s", Version))
+	fmt.Println(fmt.Sprintf("Version %s", version))
 }
 
 func main() {
