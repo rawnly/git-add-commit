@@ -2,37 +2,25 @@ package git
 
 import (
 	"github.com/rawnly/git-add-commit/term"
-	"os/exec"
+	"github.com/rawnly/gitgud/git"
+	"github.com/rawnly/gitgud/run"
 	"strings"
 )
 
-// SetConfig `git config <key>`
-func SetConfig(key string, value string) error {
-	_, err := term.RunCommand("git", "config", key, value)
-
-	return err
-}
-
-// Config `git config <key> <value>`
-func Config(key string) (string, error) {
-	out, err := exec.Command("git", "config", key).Output()
-
-	if err != nil {
-		return "", err
-	}
-
-	return string(out), err
-}
-
 // Commit `git commit -n -a -m [message]`
 func Commit(message string) error {
-	_, err := term.RunCommand("git", "commit", "-n", "-a", "-m", message)
-	return err
+	cmd := run.NewGitBuilder("commit").
+		BoolFlag("-n").
+		BoolFlag("-a").
+		StringFlag("-m", message).
+		Build()
+
+	return cmd.Run()
 }
 
 // Push `git push origin ${branch}`
-func Push(branch string) error {
-	return term.RunOSCommand("git", "push", "origin", branch)
+func Push(origin string, branch string) error {
+	return term.RunOSCommand("git", "push", origin, branch)
 }
 
 // CurrentBranch Get current branch
@@ -58,27 +46,27 @@ func CurrentBranch() string {
 
 // Status `git status -s`
 func Status() ([]string, error) {
-	colorUiConfig, err := Config("color.ui")
+	colorUiConfig, err := git.Config("color.ui").Output()
 
 	if err != nil {
-		if err := SetConfig("color.ui", "auto"); err != nil {
+		if err := git.SetConfig("color.ui", "auto").Run(); err != nil {
 			return nil, err
 		}
 
 		return nil, err
 	}
 
-	if err := SetConfig("color.ui", "always"); err != nil {
+	if err := git.SetConfig("color.ui", "always").Run(); err != nil {
 		return nil, err
 	}
 
-	b, err := exec.Command("git", "status", "-s").Output()
+	b, err := git.Status(&git.StatusOptions{Short: true}).Output()
 
 	if err != nil {
 		return nil, err
 	}
 
-	if err := SetConfig("color.ui", strings.TrimSpace(strings.Trim(colorUiConfig, "\n"))); err != nil {
+	if err := git.SetConfig("color.ui", strings.TrimSpace(strings.Trim(string(colorUiConfig), "\n"))).Run(); err != nil {
 		return nil, err
 	}
 
@@ -89,10 +77,10 @@ func Status() ([]string, error) {
 
 // Diff `git diff`
 func Diff() error {
-	return term.RunOSCommand("git", "diff")
+	return run.Git("diff").RunInTerminal()
 }
 
 // AddAll `git add -A .`
 func AddAll() error {
-	return term.RunOSCommand("git", "add", "-A", ".")
+	return run.Git("add", "-A", ".").RunInTerminal()
 }

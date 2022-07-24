@@ -29,7 +29,7 @@ func Clear() error {
 }
 
 func RunOSCommand(command string, args ...string) error {
-	cmd := exec.Command(command,  args...)
+	cmd := exec.Command(command, args...)
 
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
@@ -41,12 +41,17 @@ func RunOSCommand(command string, args ...string) error {
 // OpenEditor Edit commit message via VIM
 func OpenEditor(content string) (string, error) {
 	const FileName = ".commit"
+	editor := os.Getenv("EDITOR")
+
+	if editor == "" {
+		editor = "vim"
+	}
 
 	if e := writeFile(FileName, content); e != nil {
 		return "", e
 	}
 
-	if err := RunOSCommand("vim", FileName); err != nil {
+	if err := RunOSCommand(editor, FileName); err != nil {
 		return content, err
 	}
 
