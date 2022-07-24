@@ -17,6 +17,7 @@ var version = "development"
 var cli struct {
 	Version bool   `help:"Print version" short:"v"`
 	Commit  string `arg:"" help:"Your commit message" name:"commit message" optional:""`
+	Remote  string `help:"Specify remote" name:"remote" default:"origin"`
 }
 
 func printVersion() {
@@ -144,7 +145,7 @@ func execute(status []string, commitMessage string) {
 			fmt.Println()
 			handleCommandError(git.Commit(commitMessage))
 
-			err := git.Push(git.CurrentBranch())
+			err := git.Push(cli.Remote, git.CurrentBranch())
 			handleCommandError(err)
 
 			os.Exit(0)
