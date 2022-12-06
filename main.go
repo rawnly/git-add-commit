@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strings"
+
 	"github.com/alecthomas/kong"
 	"github.com/eiannone/keyboard"
 	"github.com/mgutz/ansi"
 	"github.com/rawnly/git-add-commit/git"
 	"github.com/rawnly/git-add-commit/term"
-	"log"
-	"os"
-	"strings"
 )
 
 var version = "development"
@@ -17,6 +18,7 @@ var version = "development"
 var cli struct {
 	Version bool   `help:"Print version" short:"v"`
 	Commit  string `arg:"" help:"Your commit message" name:"commit message" optional:""`
+	Path    string `arg:"." help:"Path to files" optional:""`
 	Remote  string `help:"Specify remote" name:"remote" default:"origin"`
 }
 
@@ -35,6 +37,7 @@ func main() {
 	}
 
 	commitMessage := strings.TrimRight(strings.TrimSpace(cli.Commit), "\n")
+	pathspec := strings.TrimRight(strings.TrimSpace(cli.Path), "\n")
 
 	if len(commitMessage) == 0 {
 		newCommit, err := term.OpenEditor(commitMessage)
@@ -47,7 +50,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	status, err := git.Status()
+	status, err := git.Status(pathspec)
 	handleCommandError(err)
 
 	if len(status) == 0 {
@@ -55,7 +58,7 @@ func main() {
 		return
 	}
 
-	execute(status, commitMessage)
+	execute(status, commitMessage, pathspec)
 }
 
 func showUsage() {
@@ -63,13 +66,20 @@ func showUsage() {
 	fmt.Printf("Press %s to continue and %s.\n", boldText("[p]"), boldText("PUSH"))
 	fmt.Println()
 	fmt.Println(dimText("Press [d] to run diff"))
-	fmt.Printf("%s %s\n", dimText("Press [e] to edit the"), ansi.Color("commit message", "yellow+d"))
+	fmt.Printf(
+		"%s %s\n",
+		dimText("Press [e] to edit the"),
+		ansi.Color("commit message", "yellow+d"),
+	)
 	fmt.Println(dimText("Press [q] to quit"))
 }
 
 func showStatus(status []string, commitMessage string) {
 	fmt.Println()
-	fmt.Printf("Committing the following files with: [ %s ]\n", ansi.Color(commitMessage, "yellow+hbu"))
+	fmt.Printf(
+		"Committing the following files with: [ %s ]\n",
+		ansi.Color(commitMessage, "yellow+hbu"),
+	)
 	fmt.Println(dimText("-----------------"))
 	for _, s := range status {
 		if len(s) > 0 {
@@ -95,7 +105,7 @@ func prompt(status []string, commitMessage string) {
 	showUsage()
 }
 
-func execute(status []string, commitMessage string) {
+func execute(status []string, commitMessage string, filesPath string) {
 	keys := map[string]rune{
 		"Q": 113, "E": 101,
 		"D": 100, "P": 112,
@@ -111,7 +121,7 @@ func execute(status []string, commitMessage string) {
 
 	switch key {
 	case keyboard.KeyEnter: // ENTER
-		handleCommandError(git.AddAll())
+		handleCommandError(git.Add(filesPath))
 		fmt.Println()
 		handleCommandError(git.Commit(commitMessage))
 		os.Exit(0)
@@ -133,12 +143,12 @@ func execute(status []string, commitMessage string) {
 			newCommit, err := term.OpenEditor(commitMessage)
 			handleCommandError(err)
 			_ = term.Clear()
-			execute(status, strings.TrimRight(strings.TrimSpace(newCommit), "\n"))
+			execute(status, strings.TrimRight(strings.TrimSpace(newCommit), "\n"), filesPath)
 			break
 		case keys["D"]:
 			handleCommandError(git.Diff())
 			_ = term.Clear()
-			execute(status, commitMessage)
+			execute(status, commitMessage, filesPath)
 			break
 		case keys["P"]:
 			handleCommandError(git.AddAll())
@@ -151,7 +161,7 @@ func execute(status []string, commitMessage string) {
 			os.Exit(0)
 		default:
 			_ = term.Clear()
-			execute(status, commitMessage)
+			execute(status, commitMessage, filesPath)
 			break
 		}
 		break

@@ -1,10 +1,11 @@
 package git
 
 import (
+	"strings"
+
 	"github.com/rawnly/git-add-commit/term"
 	"github.com/rawnly/gitgud/git"
 	"github.com/rawnly/gitgud/run"
-	"strings"
 )
 
 // Commit `git commit -n -a -m [message]`
@@ -44,8 +45,8 @@ func CurrentBranch() string {
 	return strings.ReplaceAll(currentBranch, "*", "")
 }
 
-// Status `git status -s`
-func Status() ([]string, error) {
+// Status `git status -s [pathspec]`
+func Status(pathspec string) ([]string, error) {
 	colorUiConfig, err := git.Config("color.ui").Output()
 
 	if err != nil {
@@ -60,7 +61,14 @@ func Status() ([]string, error) {
 		return nil, err
 	}
 
-	b, err := git.Status(&git.StatusOptions{Short: true}).Output()
+	if len(pathspec) == 0 {
+		pathspec = "."
+	}
+
+	b, err := git.Status(&git.StatusOptions{
+		Short: true,
+		Path:  pathspec,
+	}).Output()
 
 	if err != nil {
 		return nil, err
@@ -83,4 +91,8 @@ func Diff() error {
 // AddAll `git add -A .`
 func AddAll() error {
 	return run.Git("add", "-A", ".").RunInTerminal()
+}
+
+func Add(path string) error {
+	return run.Git("add", "-A", path).RunInTerminal()
 }

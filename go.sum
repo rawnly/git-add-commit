@@ -19,6 +19,10 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rawnly/gitgud v0.0.0-20220715160028-16d86c1533b1 h1:DnJnrzd9YQ4HhOGs4egeE9x9/sy7+f1IA9qmPHrFkPo=
 github.com/rawnly/gitgud v0.0.0-20220715160028-16d86c1533b1/go.mod h1:t27b8OT6Ey9aCF8aVl3O+S4lA9OiUPxJWyKBdyKWYmM=
+github.com/rawnly/gitgud v0.0.0-20221206013159-70cd04191d4b h1:TqDWrmzOTTdkO+ezmIrEpILq8Kbdlb4CvJp/zJqbLPY=
+github.com/rawnly/gitgud v0.0.0-20221206013159-70cd04191d4b/go.mod h1:t27b8OT6Ey9aCF8aVl3O+S4lA9OiUPxJWyKBdyKWYmM=
+github.com/rawnly/gitgud v0.0.1 h1:VgY082wPD1GXL1BwNpnj2yv21ieQ/W0/YccNju8Y+mc=
+github.com/rawnly/gitgud v0.0.1/go.mod h1:t27b8OT6Ey9aCF8aVl3O+S4lA9OiUPxJWyKBdyKWYmM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
