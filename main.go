@@ -39,6 +39,10 @@ func main() {
 	commitMessage := strings.TrimRight(strings.TrimSpace(cli.Commit), "\n")
 	pathspec := strings.TrimRight(strings.TrimSpace(cli.Path), "\n")
 
+	if len(pathspec) == 0 {
+		pathspec = "."
+	}
+
 	if len(commitMessage) == 0 {
 		newCommit, err := term.OpenEditor(commitMessage)
 		handleCommandError(err)
